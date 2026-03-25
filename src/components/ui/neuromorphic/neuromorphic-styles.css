@@ -1,0 +1,1237 @@
+/**
+ * Neuromorphic UI – scoped styles for the test page
+ * Use only within .neuromorphic-page to avoid affecting the rest of the site.
+ * Date: Feb 18, 2026
+ */
+
+.neuromorphic-page {
+  --neu-bg-primary: #f0f2f7;
+  --neu-bg-secondary: #e2e6ed;
+  --neu-shadow-dark: #c8ccd4;
+  --neu-shadow-light: #ffffff;
+  --neu-primary: #7c3aed;
+  --neu-primary-dark: #6d28d9;
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+}
+
+.neuromorphic-page.neuromorphic-dark {
+  --neu-bg-primary: #1a2030;
+  --neu-bg-secondary: #141a27;
+  --neu-shadow-dark: #0d1117;
+  --neu-shadow-light: #243045;
+}
+
+.neuromorphic-page {
+  font-family: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  background: linear-gradient(145deg, var(--neu-bg-primary), var(--neu-bg-secondary));
+  min-height: 100%;
+  transition: background 0.5s ease;
+  color: #1f2937;
+}
+
+.neuromorphic-page.neuromorphic-dark {
+  color: #e5e7eb;
+}
+
+/* Dark mode: force readable text and icons (sync with site theme) */
+.neuromorphic-page.neuromorphic-dark,
+.neuromorphic-page.neuromorphic-dark * {
+  /* Override any light-mode gray text so it’s visible on dark background */
+  --neu-text: #e5e7eb;
+  --neu-text-muted: #9ca3af;
+  --neu-text-faint: #6b7280;
+}
+.neuromorphic-page.neuromorphic-dark p,
+.neuromorphic-page.neuromorphic-dark span:not([class*="bg-"]):not([class*="text-white"]),
+.neuromorphic-page.neuromorphic-dark li,
+.neuromorphic-page.neuromorphic-dark td,
+.neuromorphic-page.neuromorphic-dark th,
+.neuromorphic-page.neuromorphic-dark label,
+.neuromorphic-page.neuromorphic-dark legend,
+.neuromorphic-page.neuromorphic-dark h1,
+.neuromorphic-page.neuromorphic-dark h2,
+.neuromorphic-page.neuromorphic-dark h3 {
+  color: inherit;
+}
+.neuromorphic-page.neuromorphic-dark input,
+.neuromorphic-page.neuromorphic-dark textarea,
+.neuromorphic-page.neuromorphic-dark select {
+  color: #e5e7eb;
+}
+.neuromorphic-page.neuromorphic-dark input::placeholder,
+.neuromorphic-page.neuromorphic-dark textarea::placeholder {
+  color: #9ca3af;
+}
+/* Icons (Lucide SVGs and any svg) use currentColor – ensure they’re light */
+.neuromorphic-page.neuromorphic-dark svg:not([class*="text-white"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-yellow"]):not([class*="text-blue"]):not([class*="text-purple"]) {
+  color: #d1d5db;
+}
+.neuromorphic-page.neuromorphic-dark [class*="text-gray-"] {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-gray-300 {
+  color: #d1d5db !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-gray-400,
+.neuromorphic-page.neuromorphic-dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-purple-500,
+.neuromorphic-page.neuromorphic-dark .text-purple-600 {
+  color: #c4b5fd !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-blue-500 {
+  color: #93c5fd !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-yellow-500 {
+  color: #fcd34d !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-orange-500 {
+  color: #fdba74 !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-green-500 {
+  color: #6ee7b7 !important;
+}
+.neuromorphic-page.neuromorphic-dark .text-red-500 {
+  color: #f87171 !important;
+}
+.neuromorphic-page.neuromorphic-dark .border-gray-200,
+.neuromorphic-page.neuromorphic-dark .border-gray-300 {
+  border-color: #4b5563;
+}
+.neuromorphic-page.neuromorphic-dark .border-gray-600,
+.neuromorphic-page.neuromorphic-dark .border-gray-700 {
+  border-color: #6b7280;
+}
+.neuromorphic-page.neuromorphic-dark .hover\:text-gray-600:hover {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .hover\:text-red-500:hover {
+  color: #fca5a5 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hover\:text-gray-300:hover {
+  color: #d1d5db !important;
+}
+.neuromorphic-page.neuromorphic-dark .hover\:bg-purple-50:hover,
+.neuromorphic-page.neuromorphic-dark .hover\:bg-white\/30:hover {
+  background-color: rgba(147, 51, 234, 0.15);
+}
+.neuromorphic-page.neuromorphic-dark .dark\:hover\:bg-purple-900\/30:hover {
+  background-color: rgba(147, 51, 234, 0.2);
+}
+.neuromorphic-page.neuromorphic-dark .hover\:border-purple-400:hover {
+  border-color: #a78bfa;
+}
+.neuromorphic-page.neuromorphic-dark .focus\:border-purple-400:focus {
+  border-color: #a78bfa;
+}
+.neuromorphic-page.neuromorphic-dark .cursor-context-menu {
+  cursor: context-menu;
+}
+.neuromorphic-page.neuromorphic-dark .cursor-pointer {
+  cursor: pointer;
+}
+.neuromorphic-page.neuromorphic-dark .context-menu-item:hover {
+  background-color: rgba(147, 51, 234, 0.2);
+}
+.neuromorphic-page.neuromorphic-dark .tree-item button:hover,
+.neuromorphic-page.neuromorphic-dark .tree-leaf div:hover {
+  background-color: rgba(147, 51, 234, 0.15);
+}
+.neuromorphic-page.neuromorphic-dark .neu-tooltip {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+.neuromorphic-page.neuromorphic-dark .neu-tooltip .border-t-gray-800 {
+  border-top-color: #1f2937;
+}
+
+.neuromorphic-page .neu-raised {
+  background: linear-gradient(145deg, var(--neu-bg-primary), var(--neu-bg-secondary));
+  box-shadow:
+    8px 8px 16px var(--neu-shadow-dark),
+    -8px -8px 16px var(--neu-shadow-light);
+}
+
+.neuromorphic-page .neu-raised-sm {
+  box-shadow:
+    4px 4px 8px var(--neu-shadow-dark),
+    -4px -4px 8px var(--neu-shadow-light);
+}
+
+/* Light mode: widgets over video need a sharp dark outline so they stand out */
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .neu-raised,
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .neu-raised-sm {
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.35),
+    8px 8px 16px rgba(0, 0, 0, 0.2),
+    -8px -8px 16px rgba(255, 255, 255, 0.5);
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .neu-raised-sm {
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.35),
+    4px 4px 8px rgba(0, 0, 0, 0.2),
+    -4px -4px 8px rgba(255, 255, 255, 0.5);
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] [class*="bg-gradient"] {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+/* Light mode: device cards in Our Devices need light bg for dark text readability */
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .about-device-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Light mode: widgets/cards have light bg — force dark text (device pages use text-white on parent) */
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised h1,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised h2,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised h3,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised h4,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised p,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised span,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised li,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised td,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised th,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised label {
+  color: #111827 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised .text-muted-foreground,
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised [class*="text-muted"] {
+  color: #6b7280 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised svg:not([class*="text-"]) {
+  color: #374151 !important;
+}
+/* Light mode: Shadcn Card widgets (device pages) */
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card h1,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card h2,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card h3,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card h4,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card p,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card span,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card li,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card td,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card th {
+  color: #111827 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card .text-muted-foreground,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"].bg-card [class*="text-muted"] {
+  color: #6b7280 !important;
+}
+
+/* Hero Learn More: light mode = dark text, dark mode = white (over dark video) */
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .about-hero-learn-more {
+  color: #111827 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .about-hero-learn-more:hover {
+  color: #111827 !important;
+}
+.neuromorphic-page.neuromorphic-dark [data-over-video] .about-hero-learn-more,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .about-hero-learn-more span,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .about-hero-learn-more svg {
+  color: #ffffff !important;
+}
+
+/* View All Devices: always white (over dark video) */
+[data-over-video] .about-devices-view-all,
+[data-over-video] .about-devices-view-all span,
+[data-over-video] .about-devices-view-all svg {
+  color: #ffffff !important;
+}
+
+/* SporeBase hero title: remove any background/box artifacts */
+.sporebase-hero-title {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* SporeBase sections: force dark backgrounds in dark mode */
+.neuromorphic-page.neuromorphic-dark .sporebase-mission {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-applications {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-engineering {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-specs {
+  background-color: #0b1220 !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-technology {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-tech-card {
+  background-color: #111827 !important;
+  border-color: rgba(251, 146, 60, 0.25) !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-tech-card h3,
+.neuromorphic-page.neuromorphic-dark .sporebase-tech-card p {
+  color: #f97316 !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card[data-selected="false"],
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card:not([data-selected="true"]) {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card[data-selected="false"] h3,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card[data-selected="false"] p,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card[data-selected="false"] span,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card[data-selected="false"] svg,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card:not([data-selected="true"]) h3,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card:not([data-selected="true"]) p,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card:not([data-selected="true"]) span,
+.neuromorphic-page.neuromorphic-dark .sporebase-app-card:not([data-selected="true"]) svg {
+  color: #f97316 !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-spec-card {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .sporebase-spec-card span,
+.neuromorphic-page.neuromorphic-dark .sporebase-spec-card h3 {
+  color: #0f172a !important;
+}
+
+/* ALARM sections: force neuromorphic dark backgrounds in dark mode */
+.neuromorphic-page.neuromorphic-dark .alarm-hero-bg {
+  background: linear-gradient(180deg, #0f172a 0%, #111827 45%, #0b1220 100%) !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-hero-grid {
+  background-image:
+    linear-gradient(to_right, rgba(51, 65, 85, 0.35) 1px, transparent 1px),
+    linear-gradient(to_bottom, rgba(51, 65, 85, 0.35) 1px, transparent 1px) !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-mission,
+.neuromorphic-page.neuromorphic-dark .alarm-detections,
+.neuromorphic-page.neuromorphic-dark .alarm-ai,
+.neuromorphic-page.neuromorphic-dark .alarm-applications {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-engineering {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-specs {
+  background-color: #0b1220 !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-cta {
+  background-color: #0f172a !important;
+  background-image: none !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-section-badge {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-stat-box {
+  background-color: #111827 !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-ai-card,
+.neuromorphic-page.neuromorphic-dark .alarm-ai-card * {
+  color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"],
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"] h3,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"] p,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"] span,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"] svg,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) h3,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) p,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) span,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) svg {
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-app-card[data-selected="false"] svg,
+.neuromorphic-page.neuromorphic-dark .alarm-app-card:not([data-selected="true"]) svg {
+  color: #ef4444 !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-engineering .text-center,
+.neuromorphic-page.neuromorphic-dark .alarm-engineering .text-center * {
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-engineering-card,
+.neuromorphic-page.neuromorphic-dark .alarm-engineering-card * {
+  color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-engineering-card [class*="text-red-"],
+.neuromorphic-page.neuromorphic-dark .alarm-engineering-card svg[class*="text-red-"] {
+  color: #ef4444 !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-spec-card,
+.neuromorphic-page.neuromorphic-dark .alarm-spec-card * {
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .alarm-spec-card {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* Hyphae1 Product Line: light bg (dots) always; dark mode = dark widgets + light text; light mode = white widgets + dark text */
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-line {
+  background-color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-line .text-center h2,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-line .text-center p,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-line .hyphae1-product-badge,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-line .hyphae1-product-badge span {
+  color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card-selected {
+  background-color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card h3,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card p,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card span,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card .font-medium {
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card .text-slate-500,
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card [class*="text-slate-300"] {
+  color: #94a3b8 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card svg {
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card div[class*="bg-slate-"] svg {
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-product-card:not(.hyphae1-product-card-selected) div[class*="bg-slate-"] svg {
+  color: #0f172a !important;
+}
+
+/* Hyphae1 Why section: ensure dark mode background + readable text */
+.neuromorphic-page.neuromorphic-dark .hyphae1-why {
+  background-color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-why h2,
+.neuromorphic-page.neuromorphic-dark .hyphae1-why p,
+.neuromorphic-page.neuromorphic-dark .hyphae1-why span,
+.neuromorphic-page.neuromorphic-dark .hyphae1-why li {
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-why [class*="bg-"] {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-why [class*="text-slate-"] {
+  color: #cbd5e1 !important;
+}
+
+/* Hyphae1 Capabilities: darker background in dark mode */
+.neuromorphic-page.neuromorphic-dark .hyphae1-capabilities {
+  background-color: #020617 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-capabilities .hyphae1-capabilities-badge,
+.neuromorphic-page.neuromorphic-dark .hyphae1-capabilities .hyphae1-capabilities-badge span {
+  color: #e2e8f0 !important;
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Hyphae1 Applications: light graphic bg, dark headings + unselected text */
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications {
+  background-color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications .text-center h2,
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications .hyphae1-applications-badge,
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications .hyphae1-applications-badge span {
+  color: #0f172a !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications .hyphae1-applications-badge {
+  background-color: #cbd5e1 !important;
+  border-color: #94a3b8 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications [class*="bg-white"] h3,
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications [class*="bg-white"] p,
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications [class*="bg-white"] span,
+.neuromorphic-page.neuromorphic-dark .hyphae1-applications [class*="bg-white"] svg {
+  color: #0f172a !important;
+}
+
+/* Hyphae1 Technical Details: dark mode = lighter grey than sections above/below (slate-800 vs slate-900) */
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs {
+  background-color: #1e293b !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-spec-card {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card span,
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card h2,
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card h3 {
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card .text-slate-600,
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card [class*="text-slate-"] {
+  color: #94a3b8 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card svg {
+  color: #94a3b8 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card .border-slate-200,
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .hyphae1-spec-card .border-b {
+  border-color: #475569 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs [class*="NeuBadge"],
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .text-center h2 {
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs .mb-4[class*="bg-"] {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs button[class*="outline"],
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs a[class*="outline"] {
+  border-color: #64748b !important;
+  color: #e2e8f0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs button[class*="outline"]:hover,
+.neuromorphic-page.neuromorphic-dark .hyphae1-tech-specs a[class*="outline"]:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* CTA Read Research: light mode = dark text, dark mode = white */
+.neuromorphic-page:not(.neuromorphic-dark) .about-cta-read-research,
+.neuromorphic-page:not(.neuromorphic-dark) .about-cta-read-research span,
+.neuromorphic-page:not(.neuromorphic-dark) .about-cta-read-research svg {
+  color: #111827 !important;
+}
+.neuromorphic-page.neuromorphic-dark .about-cta-read-research,
+.neuromorphic-page.neuromorphic-dark .about-cta-read-research span,
+.neuromorphic-page.neuromorphic-dark .about-cta-read-research svg {
+  color: #ffffff !important;
+}
+
+/* About Mycosoft badge: always white (over dark #031927) */
+#about .about-mycosoft-badge {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hardware badge, Our Devices heading, description: always white (over dark video) */
+[data-over-video] .about-hardware-badge {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Generic over-video classes (apps, devices, defense, any neuromorphic page) ── */
+/* Use on sections with dark video or dark background; text stays white. */
+[data-over-video] .device-hero-title,
+[data-over-video] .device-hero-subtitle,
+[data-over-video] .device-hero-badge,
+[data-over-video] .portal-hero-title,
+[data-over-video] .portal-hero-subtitle,
+[data-over-video] .portal-hero-badge,
+[data-over-video] .portal-hero-stat {
+  color: #ffffff !important;
+}
+[data-over-video] .device-hero-badge,
+[data-over-video] .portal-hero-badge {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+/* CTA buttons over video: light mode = dark text on light button, dark mode = white */
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .device-cta-over-video,
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .portal-cta-over-video {
+  color: #111827 !important;
+}
+.neuromorphic-page.neuromorphic-dark [data-over-video] .device-cta-over-video,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .portal-cta-over-video,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .device-cta-over-video span,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .portal-cta-over-video span,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .device-cta-over-video svg,
+.neuromorphic-page.neuromorphic-dark [data-over-video] .portal-cta-over-video svg {
+  color: #ffffff !important;
+}
+/* Outline/secondary CTAs over dark video: always white (transparent bg, needs contrast) */
+[data-over-video] .device-cta-over-video-outline,
+[data-over-video] .device-cta-over-video-outline span,
+[data-over-video] .device-cta-over-video-outline svg {
+  color: #ffffff !important;
+}
+
+/* Light mode: never show framed boxes on hero titles */
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .device-hero-title {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-shadow: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .device-hero-title::before,
+.neuromorphic-page:not(.neuromorphic-dark) [data-over-video] .device-hero-title::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* MycoNode light mode hero: remove dark box feel + use dark text */
+.neuromorphic-page:not(.neuromorphic-dark) .myconode-hero .device-hero-title,
+.neuromorphic-page:not(.neuromorphic-dark) .myconode-hero .device-hero-subtitle {
+  color: #0f172a !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .myconode-hero-title-clean {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* Remove any box/frame from the MycoNode title span in light mode */
+.neuromorphic-page:not(.neuromorphic-dark) .myconode-hero .myconode-hero-title-text {
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .portal-hero-title span {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .myconode-hero .device-hero-badge {
+  color: #4c1d95 !important;
+  border-color: rgba(147, 51, 234, 0.3) !important;
+}
+
+/* MycoNode: force original dark mode visuals */
+.neuromorphic-page.neuromorphic-dark .myconode-hero .myconode-hero-overlay {
+  background: linear-gradient(180deg, rgba(49, 0, 75, 0.7), rgba(49, 0, 75, 0.5), rgba(2, 6, 23, 0.9)) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-quickstart {
+  background: linear-gradient(180deg, rgba(49, 0, 75, 0.5), rgba(49, 0, 75, 0.3)) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-quickstart .myconode-quickstart-overlay {
+  background: linear-gradient(180deg, rgba(49, 0, 75, 0.3), rgba(0, 0, 0, 0), rgba(49, 0, 75, 0.3)) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-apps-overlay {
+  background: linear-gradient(180deg, rgba(49, 0, 75, 0.85), rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.9)) !important;
+}
+
+/* MycoNode: restore dark mode section backgrounds */
+.neuromorphic-page.neuromorphic-dark .myconode-sensing {
+  background-color: rgba(49, 0, 75, 0.3) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-engineering {
+  background-color: #000000 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-customization {
+  background: linear-gradient(180deg, #000000 0%, rgba(49, 0, 75, 0.5) 100%) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-cta {
+  background-color: #020617 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-cta .myconode-cta-widget {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-customization .myconode-customization-widget {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-behind-badge {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-behind-card {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-app-card {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* MycoNode hero title: force dark mode gradient text */
+.neuromorphic-page.neuromorphic-dark .myconode-hero .device-hero-title span {
+  color: transparent !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  background-image: linear-gradient(90deg, #a855f7, #d946ef, #22d3ee) !important;
+}
+.neuromorphic-page.neuromorphic-dark .myconode-hero .myconode-hero-whispers {
+  color: #ffffff !important;
+  background: none !important;
+}
+
+.neuromorphic-page .neu-inset {
+  background: linear-gradient(145deg, var(--neu-bg-secondary), var(--neu-bg-primary));
+  box-shadow:
+    inset 4px 4px 8px var(--neu-shadow-dark),
+    inset -4px -4px 8px var(--neu-shadow-light);
+}
+
+.neuromorphic-page .neu-flat {
+  background: linear-gradient(145deg, var(--neu-bg-primary), var(--neu-bg-secondary));
+}
+
+.neuromorphic-page .neu-btn {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.neuromorphic-page .neu-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.neuromorphic-page .neu-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow:
+    inset 2px 2px 4px var(--neu-shadow-dark),
+    inset -2px -2px 4px var(--neu-shadow-light);
+}
+
+.neuromorphic-page .neu-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.neuromorphic-page .neu-focus:focus {
+  outline: none;
+}
+
+.neuromorphic-page .neu-focus:focus-visible {
+  outline: 3px solid var(--neu-primary);
+  outline-offset: 2px;
+}
+
+.neuromorphic-page .neu-skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: var(--neu-primary);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.neuromorphic-page .neu-skip-link:focus {
+  top: 16px;
+}
+
+@keyframes neu-toast-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes neu-toast-out {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+.neuromorphic-page .neu-toast-enter {
+  animation: neu-toast-in 0.3s ease-out forwards;
+}
+
+.neuromorphic-page .neu-toast-exit {
+  animation: neu-toast-out 0.3s ease-in forwards;
+}
+
+@keyframes neu-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.neuromorphic-page .neu-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.neuromorphic-page .neu-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: neu-shimmer 1.5s infinite;
+}
+
+@keyframes neu-skeleton {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.neuromorphic-page .neu-skeleton {
+  background: linear-gradient(90deg, var(--neu-bg-secondary) 25%, var(--neu-bg-primary) 50%, var(--neu-bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: neu-skeleton 1.5s infinite;
+}
+
+@keyframes neu-grow-up {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.neuromorphic-page .neu-chart-bar {
+  animation: neu-grow-up 0.8s ease-out;
+  transform-origin: bottom;
+}
+
+.neuromorphic-page .neu-tooltip-container:hover .neu-tooltip,
+.neuromorphic-page .neu-tooltip-container:focus-within .neu-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.neuromorphic-page .neu-tooltip {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(4px);
+  transition: all var(--transition-fast);
+}
+
+.neuromorphic-page .neu-tab-btn[aria-selected="true"] {
+  background: linear-gradient(145deg, #7c3aed, #6d28d9);
+  color: white;
+  box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
+}
+
+.neuromorphic-page .neu-tab-btn[aria-selected="false"] {
+  color: #6b7280;
+}
+
+.neuromorphic-page.neuromorphic-dark .neu-tab-btn[aria-selected="false"] {
+  color: #9ca3af;
+}
+
+.neuromorphic-page .neu-accordion-panel {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.neuromorphic-page .neu-custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.neuromorphic-page .neu-custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--neu-bg-secondary);
+  border-radius: 4px;
+}
+
+.neuromorphic-page .neu-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(145deg, var(--neu-shadow-dark), #9ca0a6);
+  border-radius: 4px;
+}
+
+.neuromorphic-page .neu-modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.neuromorphic-page .neu-progress-fill {
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  transition: width 0.3s ease;
+}
+
+/* Mushroom 1 sections: force dark neuromorphic backgrounds in dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-mission {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-field-deployments {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-applications {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-watch {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-engineering {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  color: #f8fafc !important;
+}
+
+/* Mushroom 1: dark mode widget cards (technology, specifications, connectivity) */
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology [data-slot="card"],
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology .rounded-xl,
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications [data-slot="card"],
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity .backdrop-blur-sm {
+  background-color: #374151 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology [data-slot="card"] h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology [data-slot="card"] p,
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology [data-slot="card"] li,
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology .rounded-xl h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology .rounded-xl p,
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications [data-slot="card"] h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications [data-slot="card"] p,
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity .backdrop-blur-sm h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity .backdrop-blur-sm p {
+  color: #f8fafc !important;
+}
+
+/* Mushroom 1: specification values should be emerald green */
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications [data-slot="card"] .font-medium {
+  color: #34d399 !important;
+}
+
+/* Mushroom 1: dark mode buttons should have white text */
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications button,
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications button span,
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications button svg {
+  color: #ffffff !important;
+}
+
+/* Mushroom 1: Field Deployments carousel navigation buttons */
+.neuromorphic-page.neuromorphic-dark .mushroom1-field-deployments button.rounded-full {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-field-deployments button.rounded-full:hover {
+  background-color: #4b5563 !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-field-deployments button.rounded-full svg {
+  color: #ffffff !important;
+}
+
+/* Mushroom 1: Field Deployments badge dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-field-badge {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  color: #6ee7b7 !important;
+}
+
+/* Mushroom 1: Applications unselected cards in dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-usecase-card {
+  background-color: #1f2937 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Mushroom 1: NeuCard backgrounds in dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-technology [data-slot="card"],
+.neuromorphic-page.neuromorphic-dark .mushroom1-specifications [data-slot="card"],
+.neuromorphic-page.neuromorphic-dark .mushroom1-sensor-card,
+.neuromorphic-page.neuromorphic-dark .mushroom1-network-card {
+  background-color: #374151 !important;
+  background: #374151 !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-sensor-card h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-sensor-card p,
+.neuromorphic-page.neuromorphic-dark .mushroom1-sensor-card li,
+.neuromorphic-page.neuromorphic-dark .mushroom1-network-card h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-network-card p {
+  color: #ffffff !important;
+}
+
+/* Mushroom 1: Specification cards in dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-spec-card {
+  background-color: #374151 !important;
+  background: #374151 !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-spec-card h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-spec-card > div > div > div > span:first-child {
+  color: #ffffff !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-spec-card > div > div > div > span.font-medium {
+  color: #34d399 !important;
+}
+
+/* Mushroom 1: Connectivity overlay cards in dark mode */
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity .backdrop-blur-sm.rounded-xl,
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity-card {
+  background-color: #374151 !important;
+  background: #374151 !important;
+}
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity-card h3,
+.neuromorphic-page.neuromorphic-dark .mushroom1-connectivity-card p {
+  color: #ffffff !important;
+}
+
+/* ========== MYCA Page: Dark mode section backgrounds and widgets ========== */
+.neuromorphic-page.neuromorphic-dark .myca-page {
+  background: linear-gradient(145deg, var(--neu-bg-primary), var(--neu-bg-secondary)) !important;
+}
+/* MYCA sections: dark backgrounds */
+.neuromorphic-page.neuromorphic-dark .myca-page .neuromorphic-section,
+.neuromorphic-page.neuromorphic-dark .myca-page section:not([data-over-video]) {
+  background-color: #1f2937 !important;
+  color: #f8fafc !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page section[class*="bg-muted"] {
+  background-color: #111827 !important;
+}
+/* NeuCard / neu-raised in MYCA: dark background */
+.neuromorphic-page.neuromorphic-dark .myca-page .neu-raised,
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="neu-raised"] {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  box-shadow:
+    8px 8px 16px #111827,
+    -8px -8px 16px #4b5563 !important;
+  border-color: #4b5563 !important;
+}
+/* Override bg-card/80, bg-green-500/5 etc. on NeuCards */
+.neuromorphic-page.neuromorphic-dark .myca-page .neu-raised[class*="bg-card"],
+.neuromorphic-page.neuromorphic-dark .myca-page .neu-raised[class*="bg-green"] {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+}
+/* Shadcn Card in MYCA (LiveDemo, ComparisonTable) */
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"],
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] h3,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] p,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] span,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] pre,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] td,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="card"] th,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card h3,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card p,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card span,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card pre,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card td,
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-card th {
+  color: #e5e7eb !important;
+}
+/* All bg-muted variants in MYCA */
+.neuromorphic-page.neuromorphic-dark .myca-page .bg-muted,
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="bg-muted"] {
+  background-color: #374151 !important;
+}
+/* NLM Architecture diagram container */
+.neuromorphic-page.neuromorphic-dark .myca-page .rounded-xl.border[class*="bg-muted"] {
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="bg-slate-700"] {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="bg-green-600"] {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+  color: #bbf7d0 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="bg-blue-900"] {
+  background-color: rgba(30, 58, 138, 0.3) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  color: #bfdbfe !important;
+}
+/* NeuBadge and Badge in MYCA dark mode */
+.neuromorphic-page.neuromorphic-dark .myca-page [class*="rounded-full"].px-4,
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="badge"] {
+  background: linear-gradient(145deg, #374151, #1f2937) !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+/* Tabs (LiveDemo) - TabsList and triggers */
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="tabs-list"],
+.neuromorphic-page.neuromorphic-dark .myca-page [role="tablist"] {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="tabs-trigger"],
+.neuromorphic-page.neuromorphic-dark .myca-page [role="tab"] {
+  color: #9ca3af !important;
+}
+.neuromorphic-page.neuromorphic-dark .myca-page [data-slot="tabs-trigger"][data-state="active"],
+.neuromorphic-page.neuromorphic-dark .myca-page [role="tab"][data-state="active"] {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+}
+/* neu-inset (TechnicalSpecs chevron buttons) */
+.neuromorphic-page.neuromorphic-dark .myca-page .neu-inset {
+  background: linear-gradient(145deg, #1f2937, #374151) !important;
+  box-shadow:
+    inset 4px 4px 8px #111827,
+    inset -4px -4px 8px #4b5563 !important;
+}
+/* text-green-700, text-green-600 dark mode fix */
+.neuromorphic-page.neuromorphic-dark .myca-page .text-green-700,
+.neuromorphic-page.neuromorphic-dark .myca-page .text-green-600 {
+  color: #6ee7b7 !important;
+}
+/* Suggested prompts pills, agent chips (LiveDemo) */
+.neuromorphic-page.neuromorphic-dark .myca-page .rounded-lg[class*="bg-muted"] {
+  background-color: #374151 !important;
+}
+
+/* ─── NLM page: ensure Cards, text, and prose are readable in both modes ─── */
+
+/* Light mode: Shadcn Cards on the NLM page need opaque light bg for contrast */
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(4px);
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] h1,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] h2,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] h3,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] h4,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] p,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] span,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] li,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] td,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] th,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] label {
+  color: #1f2937;
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] .text-muted-foreground,
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card"] [class*="text-muted"] {
+  color: #4b5563 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) [data-slot="card-description"] {
+  color: #4b5563 !important;
+}
+/* Light mode: section headings outside cards */
+.neuromorphic-page:not(.neuromorphic-dark) h1,
+.neuromorphic-page:not(.neuromorphic-dark) h2,
+.neuromorphic-page:not(.neuromorphic-dark) h3 {
+  color: #111827;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .text-muted-foreground {
+  color: #4b5563 !important;
+}
+/* Light mode: prose sections */
+.neuromorphic-page:not(.neuromorphic-dark) .prose {
+  color: #1f2937 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .prose strong {
+  color: #111827 !important;
+}
+.neuromorphic-page:not(.neuromorphic-dark) .prose p {
+  color: #1f2937 !important;
+}
+
+/* Dark mode: Shadcn Cards on the NLM page need proper dark bg */
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] {
+  background-color: rgba(20, 26, 39, 0.85) !important;
+  border-color: #2a3345 !important;
+  backdrop-filter: blur(4px);
+}
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] h1,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] h2,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] h3,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] h4,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] label {
+  color: #f3f4f6 !important;
+}
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] p,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] span,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] li,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] td,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] th {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] .text-muted-foreground,
+.neuromorphic-page.neuromorphic-dark [data-slot="card"] [class*="text-muted"] {
+  color: #9ca3af !important;
+}
+.neuromorphic-page.neuromorphic-dark [data-slot="card-description"] {
+  color: #9ca3af !important;
+}
+/* Dark mode: section headings outside cards */
+.neuromorphic-page.neuromorphic-dark h1,
+.neuromorphic-page.neuromorphic-dark h2,
+.neuromorphic-page.neuromorphic-dark h3 {
+  color: #f3f4f6;
+}
+/* Dark mode: prose sections */
+.neuromorphic-page.neuromorphic-dark .prose {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .prose strong {
+  color: #f3f4f6 !important;
+}
+.neuromorphic-page.neuromorphic-dark .prose p {
+  color: #e5e7eb !important;
+}
+/* Dark mode: bg-background inside cards */
+.neuromorphic-page.neuromorphic-dark .bg-background {
+  background-color: #111827 !important;
+}
+/* Dark mode: NeuCard raised elements */
+.neuromorphic-page.neuromorphic-dark .neu-raised h1,
+.neuromorphic-page.neuromorphic-dark .neu-raised h2,
+.neuromorphic-page.neuromorphic-dark .neu-raised h3,
+.neuromorphic-page.neuromorphic-dark .neu-raised h4 {
+  color: #f3f4f6 !important;
+}
+.neuromorphic-page.neuromorphic-dark .neu-raised p,
+.neuromorphic-page.neuromorphic-dark .neu-raised span,
+.neuromorphic-page.neuromorphic-dark .neu-raised li {
+  color: #e5e7eb !important;
+}
+.neuromorphic-page.neuromorphic-dark .neu-raised .text-muted-foreground {
+  color: #9ca3af !important;
+}
+/* Light mode: NeuCard raised text */
+.neuromorphic-page:not(.neuromorphic-dark) .neu-raised .text-muted-foreground {
+  color: #4b5563 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neuromorphic-page *,
+  .neuromorphic-page *::before,
+  .neuromorphic-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,121 @@
+/**
+ * Supabase Middleware Helper
+ * Refreshes user sessions and handles auth state
+ * @see https://supabase.com/docs/guides/auth/server-side/nextjs
+ */
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+import { isCompanyEmail, COMPANY_EMAIL_DOMAINS } from '@/lib/access/types'
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  // Check if Supabase credentials are configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // Supabase not configured, skip auth middleware
+    console.warn('[Supabase] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    return supabaseResponse
+  }
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Ensure cookies are set with proper domain for production
+            const cookieOptions = {
+              ...options,
+              // Set domain only in production (not localhost)
+              domain: request.nextUrl.hostname !== 'localhost' 
+                ? request.nextUrl.hostname 
+                : undefined,
+              // Set secure in production (HTTPS)
+              secure: request.nextUrl.protocol === 'https:',
+              // Set sameSite for CSRF protection
+              sameSite: 'lax' as const,
+              // Set path
+              path: options?.path || '/',
+            }
+            supabaseResponse.cookies.set(name, value, cookieOptions)
+          })
+        },
+      },
+    }
+  )
+
+  // IMPORTANT: Avoid writing any logic between createServerClient and
+  // supabase.auth.getUser(). A simple mistake could make your app
+  // vulnerable to security issues.
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // Check if trying to access protected route without auth
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
+  // Note: /devices is PUBLIC (home page devices section)
+  // Protected routes require authentication
+  const isProtectedRoute = request.nextUrl.pathname.startsWith('/account') ||
+                          request.nextUrl.pathname.startsWith('/security') ||
+                          request.nextUrl.pathname.startsWith('/admin') ||
+                          request.nextUrl.pathname.startsWith('/natureos')
+
+  if (!user && isProtectedRoute) {
+    // SECURITY: Dev bypass requires explicit opt-in env var (not just NODE_ENV)
+    const devBypass = process.env.UNSAFE_BYPASS_AUTH === 'true' &&
+                      process.env.NODE_ENV === 'development' &&
+                      (request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1')
+
+    if (!devBypass) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(url)
+    }
+    console.log('[Auth] UNSAFE development bypass enabled for:', request.nextUrl.pathname)
+  }
+
+  // COMPANY GATE: Infrastructure routes require @mycosoft.org or @mycosoft.com email
+  const infrastructurePaths = [
+    '/natureos/devices', '/natureos/mycobrain', '/natureos/sporebase',
+    '/natureos/fci', '/natureos/crep', '/natureos/fusarium',
+    '/natureos/mindex', '/natureos/storage', '/natureos/containers',
+    '/natureos/monitoring',
+  ]
+  const isInfrastructureRoute = infrastructurePaths.some(
+    p => request.nextUrl.pathname === p || request.nextUrl.pathname.startsWith(p + '/')
+  )
+
+  if (user && isInfrastructureRoute && !isCompanyEmail(user.email)) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/natureos'
+    url.searchParams.set('error', 'company_access_required')
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect authenticated users away from auth pages
+  if (user && isAuthRoute && !request.nextUrl.pathname.includes('/callback')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/natureos'
+    return NextResponse.redirect(url)
+  }
+
+  // IMPORTANT: Return the supabaseResponse as is. If you return a
+  // NextResponse.next() without the session updates, the session will
+  // be lost.
+  return supabaseResponse
+}

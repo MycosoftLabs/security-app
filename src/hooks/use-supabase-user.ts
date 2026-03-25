@@ -1,0 +1,200 @@
+/**
+ * Hook for accessing the current Supabase user
+ * Use this in client components to get user state
+ */
+"use client"
+
+import { useEffect, useState, useCallback, useMemo } from "react"
+import { createClient } from "@/lib/supabase/client"
+import type { User, Session } from "@supabase/supabase-js"
+
+interface UseSupabaseUserReturn {
+  user: User | null
+  session: Session | null
+  loading: boolean
+  error: Error | null
+  signOut: () => Promise<void>
+  refreshSession: () => Promise<void>
+}
+
+export function useSupabaseUser(): UseSupabaseUserReturn {
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const supabase = useMemo(() => {
+    try {
+      return createClient()
+    } catch {
+      return null
+    }
+  }, [])
+
+  const refreshSession = useCallback(async () => {
+    if (!supabase) return
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (error) throw error
+      setSession(session)
+      setUser(session?.user ?? null)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to get session"))
+    }
+  }, [supabase])
+
+  const signOut = useCallback(async () => {
+    if (!supabase) return
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      setUser(null)
+      setSession(null)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to sign out"))
+    } finally {
+      setLoading(false)
+    }
+  }, [supabase])
+
+  useEffect(() => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
+    // Single call to getSession - it contains the user
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) {
+          // Silently handle missing session - not an error
+          if (error.message !== "Auth session missing!") {
+            console.warn("Session error:", error.message)
+          }
+        }
+        setSession(session)
+        setUser(session?.user ?? null)
+      } catch {
+        // Silently fail - don't block the app
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Use setTimeout to not block initial render
+    const timeoutId = setTimeout(getInitialSession, 0)
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session)
+        setUser(session?.user ?? null)
+        setLoading(false)
+      }
+    )
+
+    return () => {
+      clearTimeout(timeoutId)
+      subscription.unsubscribe()
+    }
+  }, [supabase])
+
+  return { user, session, loading, error, signOut, refreshSession }
+}
+
+/**
+ * Hook for accessing user profile from Supabase
+ */
+interface Profile {
+  id: string
+  username: string | null
+  full_name: string | null
+  avatar_url: string | null
+  organization: string | null
+  role: string
+  subscription_tier: 'free' | 'pro' | 'enterprise'
+  created_at: string
+  updated_at: string
+}
+
+interface UseProfileReturn {
+  profile: Profile | null
+  loading: boolean
+  error: Error | null
+  updateProfile: (updates: Partial<Profile>) => Promise<void>
+}
+
+export function useProfile(): UseProfileReturn {
+  const { user, loading: userLoading } = useSupabaseUser()
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const supabase = useMemo(() => {
+    try {
+      return createClient()
+    } catch {
+      return null
+    }
+  }, [])
+
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!supabase || !user) {
+        setProfile(null)
+        setLoading(false)
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single()
+
+        if (error && error.code !== "PGRST116") {
+          throw error
+        }
+        setProfile(data)
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error("Failed to get profile"))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (!userLoading) {
+      getProfile()
+    }
+  }, [user, userLoading, supabase])
+
+  const updateProfile = useCallback(async (updates: Partial<Profile>) => {
+    if (!supabase) {
+      throw new Error("Supabase is not configured")
+    }
+    if (!user) {
+      throw new Error("No user logged in")
+    }
+
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", user.id)
+        .select()
+        .single()
+
+      if (error) throw error
+      setProfile(data)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to update profile"))
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [user, supabase])
+
+  return { profile, loading: loading || userLoading, error, updateProfile }
+}

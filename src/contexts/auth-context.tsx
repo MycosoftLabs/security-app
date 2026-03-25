@@ -1,0 +1,141 @@
+"use client"
+
+import type React from "react"
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react"
+import { createClient } from "@/lib/supabase/client"
+import type { User as SupabaseUser, Session } from "@supabase/supabase-js"
+
+export interface User {
+  id: string
+  name: string
+  email: string | null
+  avatar?: string
+  role?: string
+}
+
+interface AuthContextType {
+  user: User | null
+  session: Session | null
+  login: (email: string, password: string) => Promise<{ error?: string }>
+  signOut: () => Promise<void>
+  isLoading: boolean
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = useMemo(() => {
+    try {
+      return createClient()
+    } catch {
+      return null
+    }
+  }, [])
+
+  // Transform Supabase user to our User interface
+  const transformUser = useCallback((supabaseUser: SupabaseUser | null): User | null => {
+    if (!supabaseUser) return null
+    return {
+      id: supabaseUser.id,
+      name: supabaseUser.user_metadata?.full_name || 
+            supabaseUser.user_metadata?.name ||
+            supabaseUser.email?.split("@")[0] || 
+            "User",
+      email: supabaseUser.email ?? null,
+      avatar: supabaseUser.user_metadata?.avatar_url || 
+              supabaseUser.user_metadata?.picture ||
+              "/placeholder.svg",
+      role: supabaseUser.user_metadata?.role || "user",
+    }
+  }, [])
+
+  // Initialize auth state - non-blocking
+  useEffect(() => {
+    if (!supabase) {
+      setIsLoading(false)
+      return
+    }
+
+    // Use setTimeout to not block initial render
+    const timeoutId = setTimeout(async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession()
+        setSession(currentSession)
+        setUser(transformUser(currentSession?.user ?? null))
+      } catch {
+        // Silently fail - don't block the app
+      } finally {
+        setIsLoading(false)
+      }
+    }, 0)
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        setSession(newSession)
+        setUser(transformUser(newSession?.user ?? null))
+        setIsLoading(false)
+      }
+    )
+
+    return () => {
+      clearTimeout(timeoutId)
+      subscription.unsubscribe()
+    }
+  }, [supabase, transformUser])
+
+  const login = async (email: string, password: string): Promise<{ error?: string }> => {
+    if (!supabase) return { error: "Authentication is not configured on this environment." }
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) {
+        return { error: error.message }
+      }
+      setSession(data.session)
+      setUser(transformUser(data.user))
+      return {}
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : "Failed to sign in" }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const doSignOut = async () => {
+    if (!supabase) {
+      setUser(null)
+      setSession(null)
+      setIsLoading(false)
+      return
+    }
+    setIsLoading(true)
+    try {
+      await supabase.auth.signOut()
+      setUser(null)
+      setSession(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, session, login, signOut: doSignOut, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
+}

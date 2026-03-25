@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  security-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: security-dashboard-standalone
+    restart: unless-stopped
+    ports:
+      - "3006:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    networks:
+      - mycosoft_security
+
+networks:
+  mycosoft_security:
+    name: mycosoft_security
+    external: false
