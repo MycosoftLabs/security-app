@@ -17,6 +17,13 @@ services:
     networks:
       - mycosoft_security
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://security-app:3000
+    restart: unless-stopped
+    networks:
+      - mycosoft_security
+
 networks:
   mycosoft_security:
     name: mycosoft_security
