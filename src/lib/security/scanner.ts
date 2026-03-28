@@ -67,7 +67,7 @@ export interface ScanRequest {
 }
 
 // Configuration
-const NMAP_SERVICE_URL = process.env.NMAP_SERVICE_URL || 'http://localhost:8102';
+const NMAP_SERVICE_URL = process.env.NMAP_SERVICE_URL || process.env.NEXT_PUBLIC_MAS_API_URL || 'http://localhost:8102';
 const SCAN_TARGETS_ALLOWED = (process.env.SCAN_TARGETS || '192.168.0.0/24').split(',');
 
 // In-memory scan results cache
@@ -105,12 +105,6 @@ export async function requestScan(request: ScanRequest): Promise<string> {
   // Store pending scan
   pendingScans.set(scanId, request);
 
-  // In development/mock mode, simulate scan
-  if (process.env.NODE_ENV === 'development' || !process.env.NMAP_SERVICE_URL) {
-    setTimeout(() => simulateScan(scanId, request), 2000);
-    return scanId;
-  }
-
   // Request scan from service
   try {
     const response = await fetch(`${NMAP_SERVICE_URL}/api/v1/scan`, {
@@ -131,74 +125,9 @@ export async function requestScan(request: ScanRequest): Promise<string> {
     return scanId;
   } catch (error) {
     pendingScans.delete(scanId);
+    console.warn(`[Scanner] Failed to reach NMAP service at ${NMAP_SERVICE_URL}.`);
     throw error;
   }
-}
-
-/**
- * Simulate a scan for development/testing
- */
-function simulateScan(scanId: string, request: ScanRequest): void {
-  const startTime = new Date();
-  
-  // Generate mock hosts
-  const baseIP = request.target.split('/')[0];
-  const octets = baseIP.split('.');
-  const mockHosts: ScanHost[] = [];
-  
-  // Generate 5-15 mock hosts
-  const hostCount = Math.floor(Math.random() * 10) + 5;
-  for (let i = 1; i <= hostCount; i++) {
-    const isUp = Math.random() > 0.2;
-    mockHosts.push({
-      ip: `${octets[0]}.${octets[1]}.${octets[2]}.${i}`,
-      hostname: isUp ? `device-${i}.local` : '',
-      status: isUp ? 'up' : 'down',
-      mac: isUp ? `00:1A:2B:3C:4D:${i.toString(16).padStart(2, '0').toUpperCase()}` : '',
-      vendor: isUp ? ['Apple', 'Dell', 'Ubiquiti', 'Raspberry Pi', 'Unknown'][Math.floor(Math.random() * 5)] : '',
-      os: isUp ? ['Linux', 'Windows', 'macOS', 'UniFi OS'][Math.floor(Math.random() * 4)] : '',
-      ports: isUp && request.scanType !== 'ping' ? [
-        { port: 22, protocol: 'tcp' as const, state: 'open' as const, service: 'ssh', version: 'OpenSSH 8.2', scripts: [] },
-        { port: 80, protocol: 'tcp' as const, state: 'open' as const, service: 'http', version: 'nginx 1.18', scripts: [] },
-        { port: 443, protocol: 'tcp' as const, state: 'open' as const, service: 'https', version: 'nginx 1.18', scripts: [] },
-      ].slice(0, Math.floor(Math.random() * 3) + 1) : [],
-    });
-  }
-
-  const upHosts = mockHosts.filter(h => h.status === 'up');
-  
-  // Generate mock vulnerabilities for vuln scan
-  const mockVulns: Vulnerability[] = [];
-  if (request.scanType === 'vuln') {
-    for (const host of upHosts.slice(0, 2)) {
-      mockVulns.push({
-        cve: `CVE-2024-${Math.floor(Math.random() * 9999)}`,
-        host: host.ip,
-        port: 443,
-        severity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
-        description: 'Potential vulnerability detected in web service',
-        discoveredAt: new Date().toISOString(),
-      });
-    }
-  }
-
-  const endTime = new Date();
-  const result: ScanResult = {
-    scanId,
-    scanType: request.scanType,
-    target: request.target,
-    startedAt: startTime.toISOString(),
-    completedAt: endTime.toISOString(),
-    durationSeconds: (endTime.getTime() - startTime.getTime()) / 1000 + Math.random() * 10,
-    hostsUp: upHosts.length,
-    hostsDown: mockHosts.length - upHosts.length,
-    hosts: mockHosts,
-    vulnerabilities: mockVulns,
-    status: 'completed',
-  };
-
-  scanResultsCache.set(scanId, result);
-  pendingScans.delete(scanId);
 }
 
 /**

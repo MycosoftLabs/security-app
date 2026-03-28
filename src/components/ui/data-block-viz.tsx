@@ -215,10 +215,37 @@ export function DataBlockViz({
   orientation = "horizontal",
   className = ""
 }: DataBlockVizProps) {
+  const [liveBlocks, setLiveBlocks] = useState<DataBlock[]>([])
+  
+  useEffect(() => {
+    if (blocks) return
+    const fetchBlocks = async () => {
+      try {
+        const res = await fetch('/api/security/incidents?chain=true&limit=10')
+        if (res.ok) {
+           const data = await res.json()
+           const chain = data.chain || []
+           const transformed = chain.map((c: any, i: number) => ({
+             id: c.id || `c-${i}`,
+             hash: c.event_hash || c.hash || c.id?.slice(0, 16) || `0x${i}`,
+             value: 50 + ((c.id?.length || 0) % 50),
+             timestamp: new Date(c.created_at || Date.now()).getTime(),
+             status: "anchored",
+             type: "hash" as const
+           }))
+           if (transformed.length > 0) setLiveBlocks(transformed)
+        }
+      } catch (err) {}
+    }
+    fetchBlocks()
+    const interval = setInterval(fetchBlocks, 15000)
+    return () => clearInterval(interval)
+  }, [blocks])
+
   const displayBlocks = useMemo(() => {
-    const source = blocks || generateMockBlocks(maxBlocks)
+    const source = blocks || (liveBlocks.length > 0 ? liveBlocks : generateMockBlocks(maxBlocks))
     return source.slice(0, maxBlocks)
-  }, [blocks, maxBlocks])
+  }, [blocks, liveBlocks, maxBlocks])
 
   return (
     <div
@@ -297,16 +324,41 @@ export function TransactionBlockStrip({
   height?: number
   className?: string
 }) {
+  const [liveStrips, setLiveStrips] = useState<{ hash: string; size: number; fee: number }[]>([])
+  
+  useEffect(() => {
+    if (blocks) return
+    const fetchStrips = async () => {
+      try {
+        const res = await fetch('/api/security/incidents?chain=true&limit=20')
+        if (res.ok) {
+           const data = await res.json()
+           const chain = data.chain || []
+           const transformed = chain.map((c: any) => ({
+             hash: c.event_hash || c.hash || c.id?.slice(0, 16) || '0x',
+             size: 0.3 + (((c.id?.length || 0) % 7) / 10),
+             fee: ((c.id?.length || 0) % 10)
+           }))
+           if (transformed.length > 0) setLiveStrips(transformed)
+        }
+      } catch (err) {}
+    }
+    fetchStrips()
+    const interval = setInterval(fetchStrips, 15000)
+    return () => clearInterval(interval)
+  }, [blocks])
+
   const displayBlocks = useMemo(() => {
     if (blocks) return blocks
-    // Generate mock transaction blocks with seeded random (SSR-safe)
+    if (liveStrips.length > 0) return liveStrips
+    // Generate mock transaction blocks with seeded random (SSR-safe) as fallback
     const random = seededRandom(456)
     return Array.from({ length: 20 }, (_, i) => ({
       hash: `0x${Math.floor(random() * 0xFFFFFFFF).toString(16).padStart(8, '0')}`,
       size: 0.2 + random() * 0.8,
       fee: random() * 10
     }))
-  }, [blocks])
+  }, [blocks, liveStrips])
 
   // Color based on fee (low = green, medium = yellow, high = purple)
   const getColor = (fee: number) => {

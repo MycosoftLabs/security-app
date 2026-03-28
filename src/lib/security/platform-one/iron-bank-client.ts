@@ -183,14 +183,28 @@ export class IronBankClient {
   }
   
   /**
+   * Fetch live data from MAS monitoring OR fallback to mock
+   */
+  private async fetchContainers(): Promise<IronBankContainer[]> {
+    try {
+      const masUrl = process.env.NEXT_PUBLIC_MAS_API_URL || 'http://192.168.0.188:8001';
+      const res = await fetch(`${masUrl}/api/security/ironbank/containers`, { next: { revalidate: 3600 } });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn('[IronBank] Failed to fetch live containers from MAS, using offline configuration.');
+    }
+    return this.getMockContainers();
+  }
+
+  /**
    * Search for containers in Iron Bank registry
    */
   async searchContainers(query: string): Promise<IronBankContainer[]> {
-    // TODO: Implement actual API call when credentials available
     console.log(`[IronBank] Searching for containers: ${query}`);
-    
-    // Return mock data for development
-    return this.getMockContainers().filter(c => 
+    const containers = await this.fetchContainers();
+    return containers.filter(c => 
       c.imageName.toLowerCase().includes(query.toLowerCase())
     );
   }
@@ -200,8 +214,7 @@ export class IronBankClient {
    */
   async getContainerDetails(imageName: string, tag: string = 'latest'): Promise<IronBankContainer | null> {
     console.log(`[IronBank] Getting details for ${imageName}:${tag}`);
-    
-    const containers = this.getMockContainers();
+    const containers = await this.fetchContainers();
     return containers.find(c => c.imageName === imageName && c.imageTag === tag) || null;
   }
   

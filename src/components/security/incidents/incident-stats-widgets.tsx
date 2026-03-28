@@ -161,11 +161,15 @@ export function QueueStatsWidget({ className }: { className?: string }) {
           const data = await res.json();
           const incidents = data.incidents || [];
           
+          // Use real data to compute rate (last 1 hour new incidents)
+          const lastHour = Date.now() - 3600000;
+          const incomingRate = incidents.filter((i: any) => new Date(i.created_at).getTime() > lastHour).length;
+          
           setStats({
             pending: incidents.length,
             memoryUsage: Math.min(incidents.length * 2, 100),
             maxMemory: 100,
-            incomingRate: Math.floor(Math.random() * 10) + 1, // Mock rate
+            incomingRate: incomingRate,
           });
         }
       } catch (error) {
@@ -233,32 +237,44 @@ export function IncomingIncidentsChart({ className }: { className?: string }) {
   const [labels, setLabels] = useState<string[]>([]);
   
   useEffect(() => {
-    // Generate mock historical data
-    const now = new Date();
-    const newData: number[] = [];
-    const newLabels: string[] = [];
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch('/api/security/incidents?limit=200');
+        if (res.ok) {
+          const data = await res.json();
+          const incidents = data.incidents || [];
+          
+          // Bin by 5 minute intervals for the past 2 hours (24 points)
+          const now = Date.now();
+          const newData = Array(24).fill(0);
+          const newLabels: string[] = [];
+          
+          for (let i = 23; i >= 0; i--) {
+             const time = new Date(now - i * 5 * 60000);
+             newLabels.push(time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+          }
+          
+          incidents.forEach((inc: any) => {
+            const t = new Date(inc.created_at).getTime();
+            const diffMin = (now - t) / 60000;
+            if (diffMin <= 120 && diffMin >= 0) {
+               const bucketIndex = 23 - Math.floor(diffMin / 5);
+               if (bucketIndex >= 0 && bucketIndex <= 23) {
+                  newData[bucketIndex]++;
+               }
+            }
+          });
+          
+          setData(newData);
+          setLabels(newLabels);
+        }
+      } catch (e) {
+        console.error('Failed to fetch chart data:', e);
+      }
+    };
     
-    for (let i = 23; i >= 0; i--) {
-      const time = new Date(now.getTime() - i * 5 * 60000);
-      newData.push(Math.floor(Math.random() * 50) + 5);
-      newLabels.push(time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
-    }
-    
-    setData(newData);
-    setLabels(newLabels);
-    
-    // Add new data point every 5 seconds
-    const interval = setInterval(() => {
-      setData(prev => {
-        const newValue = Math.floor(Math.random() * 50) + 5;
-        return [...prev.slice(1), newValue];
-      });
-      setLabels(prev => {
-        const now = new Date();
-        return [...prev.slice(1), now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })];
-      });
-    }, 5000);
-    
+    fetchHistory();
+    const interval = setInterval(fetchHistory, 15000);
     return () => clearInterval(interval);
   }, []);
   
@@ -458,13 +474,34 @@ export function RecentReplacementsTable({
   const [replacements, setReplacements] = useState<RecentReplacement[]>([]);
   
   useEffect(() => {
-    // Mock replacements data (status changes, escalations)
-    setReplacements([
-      { id: '1', hash: 'abc123def456', previousStatus: 'investigating', newStatus: 'contained', type: 'resolved', timestamp: new Date().toISOString() },
-      { id: '2', hash: 'def456ghi789', previousStatus: 'open', newStatus: 'investigating', type: 'escalated', timestamp: new Date(Date.now() - 60000).toISOString() },
-      { id: '3', hash: 'ghi789jkl012', previousStatus: 'low', newStatus: 'high', type: 'escalated', timestamp: new Date(Date.now() - 120000).toISOString() },
-    ]);
-  }, []);
+    const fetchChanges = async () => {
+      try {
+        const res = await fetch(`/api/security/incidents?chain=true`);
+        if (res.ok) {
+          const data = await res.json();
+          // Extract escalated, resolved, or reassigned events from chain
+          const changes = (data.chain || [])
+            .filter((c: any) => ['escalated', 'resolved', 'assigned', 'closed'].includes(c.event_type))
+            .slice(0, limit)
+            .map((c: any) => ({
+              id: c.id,
+              hash: c.event_hash || c.id.slice(0, 16),
+              previousStatus: c.event_data?.previous_status || 'unknown',
+              newStatus: c.event_data?.updates?.status || c.event_data?.updates?.severity || c.event_type,
+              type: c.event_type === 'assigned' ? 'reassigned' : c.event_type,
+              timestamp: c.created_at
+            }));
+            
+          setReplacements(changes);
+        }
+      } catch (e) {
+        console.error('Failed to fetch status changes:', e);
+      }
+    };
+    fetchChanges();
+    const interval = setInterval(fetchChanges, 10000);
+    return () => clearInterval(interval);
+  }, [limit]);
   
   const typeColors: Record<string, { bg: string; text: string }> = {
     escalated: { bg: 'bg-orange-500/20', text: 'text-orange-400' },

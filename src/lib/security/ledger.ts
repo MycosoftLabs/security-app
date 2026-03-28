@@ -97,6 +97,10 @@ export class SecurityLedger {
       this.chain = [genesis];
       this.saveLedger(genesis);
     }
+
+    // Begin async sync with Supabase decentralized store
+    // This allows the chain to heal if local volume is wiped
+    this.syncFromSupabase().catch(err => console.error('[Ledger] Sync to Supabase failed:', err));
   }
 
   private createGenesisBlock(): IncidentBlock {
@@ -143,6 +147,78 @@ export class SecurityLedger {
       } catch(err) {
         console.error('[Supabase Sync] Exception syncing to supabase:', err);
       }
+    }
+    }
+  }
+
+  private async syncFromSupabase() {
+    if (!supabaseUrl) return;
+    try {
+      console.log('[SUPABASE] Fetching missing blocks for ledger via Supabase...');
+      const { data, error } = await supabase
+        .from('security_ledger')
+        .select('*')
+        .order('index', { ascending: true });
+        
+      if (error) {
+         if (error.code === '42P01') {
+           console.log('[SUPABASE] Table security_ledger does not exist. Please run migration script.');
+         } else {
+           console.error('[SUPABASE] Failed to fetch ledger state:', error);
+         }
+         return;
+      }
+      
+      if (data && data.length > 0) {
+        // Find the latest index locally
+        const localMaxIndex = this.chain.length > 0 ? this.chain[this.chain.length - 1].index : -1;
+        const supabaseMaxIndex = data[data.length - 1].index;
+        
+        if (supabaseMaxIndex > localMaxIndex) {
+          console.log(`[SUPABASE] Found new blocks (${localMaxIndex + 1} to ${supabaseMaxIndex}). Syncing to local ledger...`);
+          
+          let newBlocksAdded = false;
+          for (const row of data) {
+            if (row.index > localMaxIndex) {
+              const block = new IncidentBlock(row.index, row.timestamp, row.encrypted_data, row.previous_hash);
+              block.hash = row.hash;
+              block.signature = row.signature;
+              
+              const isValidPrevious = this.chain.length === 0 || this.chain[this.chain.length - 1].hash === block.previousHash;
+              if (isValidPrevious) {
+                this.chain.push(block);
+                newBlocksAdded = true;
+              } else {
+                 console.error(`[SUPABASE] Chain validation failed at index ${row.index}. Invalid previous hash mismatch.`);
+                 break; // Fork/corruption
+              }
+            }
+          }
+          if (newBlocksAdded) {
+            fs.writeFileSync(this.ledgerPath, JSON.stringify(this.chain, null, 2));
+            console.log('[SUPABASE] Ledger fully synchronized with decentralized store.');
+          }
+        } else if (localMaxIndex > supabaseMaxIndex) {
+          // Push local missing blocks to supabase
+          console.log(`[SUPABASE] Local ledger is ahead (local ${localMaxIndex} > remote ${supabaseMaxIndex}). Syncing up to Supabase...`);
+          for (let i = supabaseMaxIndex + 1; i <= localMaxIndex; i++) {
+             const block = this.chain[i];
+             if (block) await this.syncToMindex(block);
+          }
+        } else {
+          console.log('[SUPABASE] Ledger is already synchronized (in sync).');
+        }
+      } else {
+        // Supabase has no data. Push entire local chain
+        if (this.chain.length > 0) {
+            console.log('[SUPABASE] Remote ledger is empty. Pushing entire local chain...');
+            for (const block of this.chain) {
+               await this.syncToMindex(block);
+            }
+        }
+      }
+    } catch(err) {
+       console.error('[SUPABASE] Exception during ledger sync:', err);
     }
   }
 

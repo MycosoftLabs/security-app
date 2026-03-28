@@ -296,7 +296,7 @@ export async function getAssessments(): Promise<ExostarAssessment[]> {
     return []
   }
   
-  return data.map(a => ({
+  return data.map((a: any) => ({
     id: a.id,
     assessmentId: a.assessment_id,
     assessmentType: a.assessment_type,
@@ -399,33 +399,16 @@ export class ExostarClient {
    */
   async getCMMCAssessment(): Promise<ExostarAssessment | null> {
     try {
-      // In production, make actual API call:
-      // const response = await fetch(`${this.baseUrl}/assessments/cmmc`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${this.apiKey}`,
-      //     'X-Organization-Id': this.organizationId
-      //   }
-      // })
-      
-      // Mock CMMC assessment data for development
-      await new Promise(resolve => setTimeout(resolve, 300))
-      
-      return {
-        id: crypto.randomUUID(),
-        assessmentId: `CMMC-${this.organizationId}-2026`,
-        assessmentType: 'CMMC',
-        status: 'in_progress',
-        score: 85,
-        maxScore: 110,
-        completedDate: null,
-        expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-        findings: {
-          critical: 0,
-          high: 2,
-          medium: 5,
-          low: 8
+      const response = await fetch(`${this.baseUrl}/assessments/cmmc`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Organization-Id': this.organizationId
         }
+      })
+      if (response.ok) {
+        return await response.json()
       }
+      return null
     } catch (error) {
       console.error('Error fetching CMMC assessment:', error)
       return null
@@ -437,24 +420,16 @@ export class ExostarClient {
    */
   async getNIST171Assessment(): Promise<ExostarAssessment | null> {
     try {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      
-      return {
-        id: crypto.randomUUID(),
-        assessmentId: `NIST171-${this.organizationId}-2026`,
-        assessmentType: 'NIST-171',
-        status: 'completed',
-        score: 95,
-        maxScore: 110,
-        completedDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        expirationDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000).toISOString(),
-        findings: {
-          critical: 0,
-          high: 1,
-          medium: 3,
-          low: 6
+      const response = await fetch(`${this.baseUrl}/assessments/nist171`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Organization-Id': this.organizationId
         }
+      })
+      if (response.ok) {
+        return await response.json()
       }
+      return null
     } catch (error) {
       console.error('Error fetching NIST 171 assessment:', error)
       return null
@@ -466,24 +441,16 @@ export class ExostarClient {
    */
   async getCyberRiskAssessment(): Promise<ExostarAssessment | null> {
     try {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      
-      return {
-        id: crypto.randomUUID(),
-        assessmentId: `CYBER-${this.organizationId}-2026`,
-        assessmentType: 'Cyber Risk',
-        status: 'completed',
-        score: 780,
-        maxScore: 850,
-        completedDate: new Date().toISOString(),
-        expirationDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        findings: {
-          critical: 0,
-          high: 0,
-          medium: 2,
-          low: 4
+      const response = await fetch(`${this.baseUrl}/assessments/cyber-risk`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Organization-Id': this.organizationId
         }
+      })
+      if (response.ok) {
+        return await response.json()
       }
+      return null
     } catch (error) {
       console.error('Error fetching Cyber Risk assessment:', error)
       return null
@@ -503,12 +470,23 @@ export class ExostarClient {
   }): Promise<{ success: boolean; referenceId?: string; error?: string }> {
     try {
       // In production, make actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      return {
-        success: true,
-        referenceId: `EXO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+      const response = await fetch(`${this.baseUrl}/assessments/submit`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Organization-Id': this.organizationId,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      if (response.ok) {
+        const resData = await response.json()
+        return {
+          success: true,
+          referenceId: resData.referenceId || `EXO-${Date.now()}`
+        }
       }
+      return { success: false, error: 'Submission failed with status ' + response.status }
     } catch (error) {
       return {
         success: false,
